@@ -1,0 +1,5 @@
+# Local workspace configuration files
+.vscode
+
+# Build Files
+node_modules
