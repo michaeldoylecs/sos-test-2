@@ -108,6 +108,7 @@ The beginning of the screen where cars can dance after the match ended.
 ```
 
 #### game:replay_will_end [*stateless*]
+Event if fired when goal is scored in the replay.
 ```
 {
     "data": "game_replay_will_end",
@@ -124,7 +125,19 @@ Note: This event can be sent in duplicates. Listening to this event should take 
     "data": {
         "main_target: string
         "secondary_target: string
-        "type: string ("Goal" | "Assist" | "Save" | "Hat Trick" | "Long Goal" | "Bicycle Hit" | "Shot on Goal")
+        "type: string (
+            "Assist",
+            "Bicycle Hit",
+            "Demolition",
+            "Epic Save",
+            "Goal",
+            "Hat Trick",
+            "Long Goal",
+            "Playmaker"
+            "Save",
+            "Savior",
+            "Shot on Goal",
+        )
     },
     "event": "game:statfeed_event"
 }
