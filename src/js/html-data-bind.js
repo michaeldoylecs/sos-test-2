@@ -1,5 +1,5 @@
 /**
- * Returns a function to set the value of a given HTML DOM node.
+ * Returns getter and setter functions to manipulate value of a given HTML DOM node.
  * 
  * The HTMLElement should have a 'data-bind' attribute assigned a value to be
  * passed in as the 'attribute' parameter.
