@@ -9,7 +9,7 @@ The data returned from the server can be listened to with a format of `channel:e
 
 ```
 "game": [
-    "goal_scored" [Object of scorer Player state],
+    "goal_scored" [Stateless],
     "initialized": [Stateless],
     "match_created": [Stateless],
     "match_ended": [Object of winnerTeamNumber],
