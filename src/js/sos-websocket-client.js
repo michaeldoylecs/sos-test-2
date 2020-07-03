@@ -3,6 +3,9 @@
  * ran by the SOS BakkesMod plugin.
  */
 class SOSWebSocketClient {
+    #channels = {};
+    #socket = null;
+
     constructor() {
         this.#channels = {};
         this.socket = null;
@@ -27,7 +30,6 @@ class SOSWebSocketClient {
 
         // Initialize websocket connection
         this.socket = new WebSocket(uri);
-
         this.socket.onmessage = (event) => {
             try {
                 // Parse and validate message into JSON
@@ -35,14 +37,15 @@ class SOSWebSocketClient {
                 const {is_valid, error_message} = __validateWebsocketJSONFormat(message);
                 if (!is_valid) {
                     console.error(error_message);
+                    return;
                 }
 
                 // Parse message into 'channel', 'event', and 'data' parts.
                 const data = message.data;
-                const [channel, event] = message.event.split(':');
+                const [channel, rl_event] = message.event.split(':');
 
                 // Trigger callbacks with parsed information.
-                this.triggerCallbacks(channel, event, data);
+                this.#triggerCallbacks(channel, rl_event, data);
 
             } catch (error) {
                 console.error(error);
@@ -62,40 +65,39 @@ class SOSWebSocketClient {
      *      callback    - A function to be called when a channel:event is fired.
      *                    The function should expect a single parameter of a 'data' object.
      */
-    addSubscription({channel, event, callback}) {
+    subscribe({channel, event, callback}) {
         if (channel == null || typeof(channel) !== "string") {
             throw new TypeError("Type of 'channel' parameter must be 'string'");
         }
         if (event == null || typeof(event) !== "string") {
             throw new TypeError("Type of 'event' parameter must be 'string'");
         }
-        if (callback == null || typeof(callback) !== "string") {
+        if (callback == null || typeof(callback) !== "function") {
             throw new TypeError("Type of 'callback' parameter must be 'function'");
         }
 
         // Add channel to manager if it does not exist
-        if (!this.channels.hasOwnProperty(channel)) {
-            this.channels[channel] = {};
+        if (!this.#channels.hasOwnProperty(channel)) {
+            this.#channels[channel] = {};
         }
 
         // Add event to the given channel if it does not exist
-        if (!this.channels[channel].hasOwnProperty(event)) {
-            this.channels[channel][event] = [];
+        if (!this.#channels[channel].hasOwnProperty(event)) {
+            this.#channels[channel][event] = [];
         }
 
         // Finally, add the given callback function to the specified event
-        this.channels[channel][event].push(callback);
+        this.#channels[channel][event].push(callback);
     }
 
     /**
      * Trigger all callbacks for a given channel:event
      * 
-     * @param {channel: string, event: string, data: *} callbackDetails
-     *      channel     - A string name of a message channel
-     *      event       - A string name of an event in a channel
-     *      data        - The data to be passed to the callback functions
+     * @param {string}  channel - A string name of a message channel
+     * @param {string}  event   - A string name of an event in a channel
+     * @param {*}       data    - The data to be passed to the callback functions
      */
-    triggerCallbacks({channel, event, data}) {
+    #triggerCallbacks(channel, event, data) {
         if (channel == null || typeof(channel) !== "string") {
             throw new TypeError("Type of 'channel' parameter must be 'string'");
         }
@@ -104,19 +106,19 @@ class SOSWebSocketClient {
         }
 
         // Verify that channel exists
-        if (!this.channels.hasOwnProperty(channel)) {
+        if (!this.#channels.hasOwnProperty(channel)) {
             console.error(`[triggerCallbacks]: channel '${channel}' does not exist`);
         }
 
         // Verify that event exists
-        if (!this.channels[channel].hasOwnProperty(event)) {
+        if (!this.#channels[channel].hasOwnProperty(event)) {
             console.error(
                 `[triggerCallbacks]: Event '${event}' does not exist in channel '${channel}'`
             );
         }
 
         // Execute all callback functions for channel:event
-        for (callback in this.channels[channel][event]) {
+        for (let callback of this.#channels[channel][event]) {
             if (callback instanceof Function) {
                 callback(data);
             }
@@ -139,7 +141,7 @@ class SOSWebSocketClient {
  */
 function __validateWebsocketJSONFormat(message) {
     // Validate incoming message properly parses into an object
-    if (!(message instanceof object)) {
+    if (!(message instanceof Object)) {
         return {
             is_valid: false,
             error_message: 'Received message was not an object.',
@@ -159,7 +161,7 @@ function __validateWebsocketJSONFormat(message) {
 
     // Validate that message 'event' field is formatted properly
     const formatRegex = /.*:.*/
-    if (!formatRegex.test(message)) {
+    if (!formatRegex.test(message.event)) {
         return {
             is_valid: false,
             error_message: 'Received message event field has invalid format.',

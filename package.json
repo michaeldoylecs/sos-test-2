@@ -4,7 +4,11 @@
   "description": "A test overlay for the SOS plugin for bakkesmod",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "npm run compile-css && npm run compile-js && npm run compile-html",
+    "compile-css": "sass ./src/sass/main.sass ./build/css/main.css && uglifycss ./build/css/main.css > ./build/css/main.min.css",
+    "compile-html": "ejs-cli ./src/index.ejs > ./build/index.html",
+    "compile-js": "babel --source-maps inline --config-file ./babel.config.json ./src/js --out-file ./build/js/main.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +30,8 @@
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-transform-arrow-functions": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
-    "ejs": "^3.1.3",
-    "sass": "^1.26.9"
+    "ejs-cli": "^2.2.0",
+    "sass": "^1.26.9",
+    "uglifycss": "0.0.29"
   }
 }
