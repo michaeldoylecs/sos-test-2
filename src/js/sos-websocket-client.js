@@ -59,13 +59,12 @@ class SOSWebSocketClient {
      * Add a webhook subscription to listen to a particular channel:event pair and then execute
      * 
      * 
-     * @param {channel: string, event: string, callback: function} subscriptionDetails
-     *      channel     - A string name of a message channel
-     *      event       - A string name of an event in a channel
-     *      callback    - A function to be called when a channel:event is fired.
-     *                    The function should expect a single parameter of a 'data' object.
+     * @param {string}   channel  A string name of a message channel
+     * @param {string}   event    A string name of an event in a channel
+     * @param {function} callback A function to be called when a channel:event is fired.
+     *                            The function should expect a single parameter of a 'data' object.
      */
-    subscribe({channel, event, callback}) {
+    subscribe(channel, event, callback) {
         if (channel == null || typeof(channel) !== "string") {
             throw new TypeError("Type of 'channel' parameter must be 'string'");
         }
@@ -105,16 +104,12 @@ class SOSWebSocketClient {
             throw new TypeError("Type of 'event' parameter must be 'string'");
         }
 
-        // Verify that channel exists
-        if (!this.#channels.hasOwnProperty(channel)) {
-            console.error(`[triggerCallbacks]: channel '${channel}' does not exist`);
-        }
-
-        // Verify that event exists
-        if (!this.#channels[channel].hasOwnProperty(event)) {
-            console.error(
-                `[triggerCallbacks]: Event '${event}' does not exist in channel '${channel}'`
-            );
+        // Verify that channel and event exists
+        if (
+            !this.#channels.hasOwnProperty(channel)
+            || !this.#channels[channel].hasOwnProperty(event)
+        ) {
+            return;
         }
 
         // Execute all callback functions for channel:event
