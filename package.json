@@ -1,0 +1,32 @@
+{
+  "name": "sos-test-2",
+  "version": "1.0.0",
+  "description": "A test overlay for the SOS plugin for bakkesmod",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaeldoylecs/sos-test-2.git"
+  },
+  "keywords": [
+    "bakkemod",
+    "sos"
+  ],
+  "author": "Michael Doyle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michaeldoylecs/sos-test-2/issues"
+  },
+  "homepage": "https://github.com/michaeldoylecs/sos-test-2#readme",
+  "dependencies": {
+    "@babel/cli": "^7.10.4",
+    "@babel/core": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-arrow-functions": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "ejs": "^3.1.3",
+    "sass": "^1.26.9"
+  }
+}
